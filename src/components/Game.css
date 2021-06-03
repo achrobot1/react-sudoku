@@ -1,0 +1,50 @@
+
+body {
+    background: white;
+    color: black;
+}
+
+.container {
+    display: flex;
+}
+
+.board {
+    display: inline-block;
+ }
+
+.controls, .controls div {
+    padding: 10px;
+    text-align:center;
+}
+
+.difficulty-radio-buttons {
+    display:flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.difficulty-radio-buttons label {
+    display: block;
+}
+
+
+button {
+    padding:0.3em 0.3em;
+    border-radius:0.5em;
+    font-weight:700;
+    color:#000;
+    border-color:#673ab7;
+    background-color:#FFF;
+    text-align:center;
+    transition: all 0.2s;
+}
+button:hover{
+    background-color:#673ab7;
+}
+@media all and (max-width:30em){
+    button {
+        display:block;
+        margin:0.2em auto;
+    }
+} 
+

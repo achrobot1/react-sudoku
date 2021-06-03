@@ -1,0 +1,30 @@
+body {
+    background: white;
+    color: black;
+}
+
+.cell-div{
+    width: 25px;
+    height: 25px;
+    display: flex; 
+}
+
+.cell-input {
+    background: #fff;
+    border: 1px solid #000;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    width:100%;
+
+    transition: all 0.2s ease;
+}
+
+.cell-input:hover {
+    background: #ddd; 
+}
+
+.cell-input:focus {
+    border: 2px solid #000; 
+}
