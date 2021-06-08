@@ -2,14 +2,16 @@ import React, { Component } from "react"
 import Board from './Board'
 import './Game.css'
 
-
 export default class Game extends Component {
     constructor(props) {
         super(props);
 
+        this.previousStates = [];
+
         this.state = {
             squareValues : Array(9).fill(Array(9).fill('')),
             completedSquares : Array(9).fill(Array(9).fill(false)),
+            initialSquares : Array(9).fill(Array(9).fill(false)),
             difficulty: 'easy',
             victory: false
         };
@@ -24,9 +26,10 @@ export default class Game extends Component {
 
     async getGame() {
         let diff = {'easy':1, 'medium':2, 'hard':3}[this.state.difficulty];
-        // const url = window.location.origin + `/sudoku/api?difficulty=${diff}`;
-        const url = `https://api.codetabs.com/v1/proxy/?quest=http://www.cs.utep.edu/cheon/ws/sudoku/new/?size=9&level=${diff}`;
+        const url = window.location.origin + `/sudoku/api?difficulty=${diff}`;
+        // const url = `https://api.codetabs.com/v1/proxy/?quest=http://www.cs.utep.edu/cheon/ws/sudoku/new/?size=9&level=${diff}`;
         const squareVals = JSON.parse(JSON.stringify(this.state.squareValues)); 
+        const initialVals = JSON.parse(JSON.stringify(this.state.initialSquares)); 
 
         let response = await fetch(url);
         let boardValues = await response.json();
@@ -36,29 +39,38 @@ export default class Game extends Component {
 
             let {squareNum, cellNum} = this.xyToLocation(x, y);
             squareVals[squareNum][cellNum] = String(boardValues.squares[i].value);
+            initialVals[squareNum][cellNum] = true;
         }
 
-        this.setState({squareValues: squareVals});
+        this.setState({
+            squareValues: squareVals,
+            initialSquares: initialVals,
+            });
     }
 
 
 
     update(squareNum, cellNum, cellVal) {
-        const squareVals = JSON.parse(JSON.stringify(this.state.squareValues)); 
+        if(this.state.initialSquares[squareNum][cellNum] == false) {
+            const squareVals = JSON.parse(JSON.stringify(this.state.squareValues)); 
 
 
-        squareVals[squareNum][cellNum] = cellVal; 
+            squareVals[squareNum][cellNum] = cellVal; 
 
-        if( this.checkValidity(squareVals, squareNum, cellNum, cellVal) ) {
-            this.setState({squareValues: squareVals}); 
+            if( this.checkValidity(squareVals, squareNum, cellNum, cellVal) ) {
+                this.setState({squareValues: squareVals}); 
+                this.checkComplete(squareVals, squareNum, cellNum, cellVal); 
+
+                this.previousStates.push(this.state);
+            }
         }
-        this.checkComplete(squareVals, squareNum, cellNum, cellVal); 
     }
 
     clear(callback) {
         this.setState({
             squareValues : Array(9).fill(Array(9).fill('')),
             completedSquares : Array(9).fill(Array(9).fill(false)),
+            initialSquares : Array(9).fill(Array(9).fill(false)),
             victory: false
         },
         callback); 
@@ -239,6 +251,10 @@ export default class Game extends Component {
     }
 
 
+    undo () {
+        this.setState(this.previousStates.pop()); 
+    }
+
     onDifficultyChange(event) {
         this.setState({difficulty: event.target.value});
     }
@@ -250,6 +266,7 @@ export default class Game extends Component {
     <div className="container ">
     <div className="controls ">
         <button onClick={() => this.newGame()}>New Game</button>
+        <button id="undo-button" onClick={() => this.undo()}>Undo</button>
 
         <div className="difficulty-radio-buttons " onChange={this.onDifficultyChange}>
 
@@ -277,6 +294,7 @@ export default class Game extends Component {
     <Board 
         squareValues={this.state.squareValues}
         completedSquares={this.state.completedSquares}
+        initialSquares={this.state.initialSquares}
         difficulty ={this.state.difficulty}
         victory={this.state.victory}
         update={(sq, cell, val) => this.update(sq, cell, val)}

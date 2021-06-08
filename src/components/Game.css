@@ -30,6 +30,7 @@ body {
 
 button {
     padding:0.3em 0.3em;
+    margin: 0em  0.3em;
     border-radius:0.5em;
     font-weight:700;
     color:#000;
@@ -38,6 +39,11 @@ button {
     text-align:center;
     transition: all 0.2s;
 }
+
+#undo-button {
+    /* border-style: none; */
+}
+
 button:hover{
     background-color:#673ab7;
 }

@@ -5,7 +5,7 @@ import './Cell.css';
 export default class Cell extends Component {
 
     onChange = (e) => {
-        const v = e.target.value.replace(/\D/g, "");
+        const v = e.target.value.replace(/\D/g, ""); 
         this.props.update(v);
     } 
 
@@ -13,7 +13,12 @@ export default class Cell extends Component {
         return(
                 <div className="cell-div">
                     <input 
-                        style={{backgroundColor: this.props.completed ? '#f2ffcc' : ''}}
+                        style={
+                            {
+                                backgroundColor: this.props.completed ? '#f2ffcc' : '',
+                                fontWeight: this.props.initial ? 'bold' : '', 
+                            }
+                        }
                         className="cell-input" 
                         type="text" 
                         maxlength="1"
